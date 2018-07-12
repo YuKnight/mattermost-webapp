@@ -14,6 +14,8 @@ import DelayedAction from 'utils/delayed_action.jsx';
 import * as PostUtils from 'utils/post_utils.jsx';
 import * as Utils from 'utils/utils.jsx';
 
+import Pluggable from 'plugins/pluggable';
+
 import DotMenuItem from './dot_menu_item.jsx';
 
 export default class DotMenu extends Component {
@@ -255,7 +257,21 @@ export default class DotMenu extends Component {
             );
         }
 
-        if (menuItems.length === 0) {
+        const pluginItems = this.props.pluginMenuItems.map((item) => {
+        return (
+            <DotMenuItem
+                idPrefix={idPrefix + item.id + '_pluginmenuitem'}
+                isRHS={this.props.isRHS}
+                idCount={this.props.idCount}
+                post={this.props.post}
+                commentCount={type === 'Post' ? this.props.commentCount : 0}
+                actions={{
+                    openModal: this.props.actions.openModal,
+                }}
+            />
+        );
+
+        if (menuItems.length === 0 && pluginItems.length == 0) {
             return null;
         }
 
@@ -281,6 +297,8 @@ export default class DotMenu extends Component {
                             role='menu'
                         >
                             {menuItems}
+                            {pluginItems}
+                            <Pluggable pluggableName='PostDropdownMenuItem'/>
                         </ul>
                     </div>
                 </div>
